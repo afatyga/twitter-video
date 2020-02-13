@@ -76,5 +76,5 @@ def getMsgs(username):
 	except (tweepy.TweepError):
 		return 0 #means the username was not valid!
 
-getMsgs("johnmulaneybot")
-createVideo()
+#getMsgs("johnmulaneybot")
+#createVideo()
