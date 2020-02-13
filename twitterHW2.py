@@ -3,20 +3,21 @@
 
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
-import ffmpy #for hw3
+
+import subprocess #to run subprocess
 
 from PIL import Image, ImageDraw #to save the text as an image
 
-import io
-import os
 import urllib.request as req #to convert the url into an image file
-import json #to output a json file for the user
 
 from datetime import datetime
 # datetime object containing current date and time
 
 now = datetime.now()
 dt_string = now.strftime("%Y-%m-%d")
+
+def createVideo(): #ffmpeg -framerate 1 -i tweet%d.png test.mpg
+	subprocess.run(["ffmpeg","-framerate", "0.33", "-i", "tweet%d.png", "test.avi"])
 
 def saveAsFile(filename, textOrFile, boolTextOrFile):
 	if (boolTextOrFile == 0):
@@ -55,8 +56,8 @@ def getMsgs(username):
 			if (dateTime[0] == dt_string): #will only get tweets from the past day
 
 				tweets = tweets + "\n" + status.text # will also print tweets and google vision detection to terminal
-				countTweets = countTweets + 1
 				file_name = "tweet" + str(countTweets) + ".png"
+				countTweets = countTweets + 1
 
 				saveAsFile(file_name, str(status.text), 0)
 
@@ -76,3 +77,4 @@ def getMsgs(username):
 		return 0 #means the username was not valid!
 
 getMsgs("johnmulaneybot")
+createVideo()
