@@ -68,10 +68,11 @@ def getMsgs(username):
 						file_name = "image_name" + str(countTweets) + ".jpg"
 						saveAsFile(file_name, url, 1)
 
-				except (NameError, KeyError): #if there's no image, append just the text and etc
+				except (NameError, KeyError):
 					pass
-
-		print(tweets)
+		print("Processed user " + username)
+#		print("Tweets: ")
+#		print(tweets)
 		return 1 # a success
 	except (tweepy.TweepError):
 		return 0 #means the username was not valid!
