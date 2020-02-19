@@ -1,51 +1,73 @@
 import time
 
-from multiprocessing import Process, Queue, Pool
-from twitterHW2 import getMsgs
-import multiprocessing
+from multiprocessing import Process, Queue, Pool, cpu_count
+from twitterHW2 import start
 import os
 import time
 
-#PROCESSES = multiprocessing.cpu_count() - 1
-
-# def info(title):
-#     print(title)
-#     print('module name:', __name__)
-#     print('parent process:', os.getppid())
-#     print('process id:', os.getpid())
-
-# if __name__ == '__main__':
-#     info('main line')
-#     p = Process(target=getMsgs, args=('johnmulaneybot',))
-#     p.start()
-#     p.join()
+PROCESSES = cpu_count() - 1
+NUMBER_OF_TASKS = 10
 
 users = ['johnmulaneybot', 'tobyhater',  'barackobama', 'rihanna', 'katyperry', 'taylorswift13']
 
-queue = Queue()
-for user in users: #adds them to the queue
-	queue.put(user)
+
+def process_tasks(task_queue):
+    while not task_queue.empty():
+        username = task_queue.get()
+        start(username)
+    return True
 
 
-def processItUp():
-	startTime = time.time()
-	number_of_processes = 7
-	number_of_tasks = len(users)
-	processes = []
+def add_tasks(task_queue):
+    for user in users:
+        task_queue.put(user)
+    return task_queue
 
 
-	for w in range(number_of_processes):
-		p = Process(target=getMsgs, args=(queue.get(),) )
-		processes.append(p)
-		p.start()
+def run():
+    empty_task_queue = Queue()
+    full_task_queue = add_tasks(empty_task_queue)
+    processes = []
+    print(f'Running with {PROCESSES} processes!')
+    start = time.time()
+    for n in range(PROCESSES):
+        p = Process(
+            target=process_tasks, args=(full_task_queue,))
+        processes.append(p)
+        p.start()
+    for p in processes:
+        p.join()
+    print(f'Time taken = {time.time() - start:.10f}')
 
-    # completing process
-	for p in processes:
-		p.join()
 
 
-	print(f'Time taken = {time.time() - startTime:.10f}')
+# users = ['johnmulaneybot', 'tobyhater',  'barackobama', 'rihanna', 'katyperry', 'taylorswift13']
+
+# queue = Queue()
+# for user in users: #adds them to the queue
+# 	queue.put(user)
+
+
+# def processItUp():
+# 	startTime = time.time()
+# 	number_of_processes = 7
+# 	number_of_tasks = len(users)
+# 	processes = []
+
+# 	for w in range(number_of_processes):
+# 		if (not queue.Empty):
+# 			p = Process(target=getMsgs, args=(queue.get(),) )
+# 			processes.append(p)
+# 			p.start()
+
+#     # completing process
+# 	for p in processes:
+# 		p.join()
+
+
+# 	print(f'Time taken = {time.time() - startTime:.10f}')
 
 
 if __name__ == '__main__':
-    processItUp()
+	run()
+#    processItUp()
