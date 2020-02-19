@@ -9,19 +9,16 @@ NUMBER_OF_TASKS = 10
 
 users = ['johnmulaneybot', 'tobyhater',  'barackobama', 'rihanna', 'katyperry', 'taylorswift13']
 
-
 def process_tasks(task_queue):
     while not task_queue.empty():
         username = task_queue.get()
         start(username)
     return True
 
-
 def add_tasks(task_queue):
     for user in users:
         task_queue.put(user)
     return task_queue
-
 
 def run():
     empty_task_queue = Queue()

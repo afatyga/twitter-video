@@ -1,5 +1,6 @@
 #EC500 HW 3
 #Alex Fatyga
+import time
 
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
@@ -7,7 +8,7 @@ from threading import Thread
 
 import subprocess #to run subprocess
 
-from PIL import Image, ImageDraw #to save the text as an image
+from PIL import Image, ImageDraw, ImageFont #to save the text as an image
 
 import urllib.request as req #to convert the url into an image file
 
@@ -18,37 +19,46 @@ now = datetime.now()
 dt_string = now.strftime("%Y-%m-%d")
 
 countImages = 0
-listOfLinks = []
+#listOfLinks = []
 
-def createVideo(): #creates a video of all the images
-	subprocess.run(["ffmpeg","-framerate", "0.33", "-i", "tweet%d.png", "test.avi"])
+def createVideo(num): #creates a video of all the images
+	videoName = "tweetVid" + str(num) + ".avi"
+	subprocess.run(["ffmpeg","-framerate", "0.33", "-i", "tweets%d.png", videoName])
 
-def saveAsFile(): #goes through the list of tuples and saves images as files
-	global countImages
+def imageThreads(listOfLinks):
+	threads = []
+	for (textOrUrl,boolVal) in listOfLinks:
+		threads.append(Thread(target = saveAsFile, args = (textOrUrl, boolVal,)))
+	return threads
 
-	for (x, y) in listOfLinks:
+def saveAsFile(textOrUrl, boolVal): #goes through the list of tuples and saves images as files
 
-		filename = "tweets" + str(countImages) + ".png"
-
-		if (y == 0):
-			img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
-			d = ImageDraw.Draw(img)
-			d.text((10,10), x, fill=(255,255,0))
-			img.save(filename)
-	
-		else:
-			req.urlretrieve(x, filename)
+	global countImages	
+	filename = "tweets" + str(countImages) + ".png"
 	countImages = countImages + 1
+	if (boolVal == 0):
+		img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
+		d = ImageDraw.Draw(img)
+		font = ImageFont.truetype('arial.ttf', size=16)
+		d.text((10,10), textOrUrl, fill=(255,255,0), font = font)
+		img.save(filename)
+	elif (boolVal == 1):
+		req.urlretrieve(textOrUrl, filename)
 
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
+
 	if not isinstance(username,str): #can only take in a string
 		return 0
+
 	auth = tweepy.OAuthHandler(keys.key, keys.secretKey) #using key from keys file - blank in github
 	auth.set_access_token(keys.accessToken, keys.accessTokenSecret)
+
 	tweets = ""
 	api = tweepy.API(auth)
+
+	listOfLinks = []
 
 	try:	#will be an error if the username is valid
 		for status in tweepy.Cursor(api.user_timeline,username).items(20): #gets past 20 tweets
@@ -69,24 +79,24 @@ def getMsgs(username):
 				except (NameError, KeyError):
 					pass
 		print("Processed user " + username)
-#		print("Tweets: ")
-#		print(tweets)
-		return 1 # a success
+
+		return listOfLinks # a success
 	except (tweepy.TweepError):
-		return 0 #means the username was not valid!
+		return [] #means the username was not valid!
 
-def start(username): #my attempt at multi threading
-	thread1 = Thread(target = getMsgs, args = (username, ))
-	thread2 = Thread(target = saveAsFile)
-	thread3 = Thread(target = createVideo)
-	thread1.start()
-	thread2.start()
-	thread3.start()
-	thread1.join()
-	print("thread 1 finished...exiting")
-	thread2.join()
-	print("thread 2 finished...exiting")
-	thread3.join()
-	print("thread 3 finished...exiting")    
+def start(username, num): #my attempt at multi threading
+	start = time.time()
+	listOfStuff = getMsgs(username)
 
-start("johnmulaneybot")
+	# for (x,y) in listOfStuff:
+	# 	saveAsFile(x,y)		
+
+	threads = imageThreads(listOfStuff)
+	for thread in threads:
+		thread.start()
+	for thread in threads:
+		thread.join()
+	createVideo(num)
+	print(f'Time taken = {time.time() - start:.10f}')
+
+start("johnmulaneybot",3)
