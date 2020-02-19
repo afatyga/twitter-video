@@ -25,9 +25,9 @@ def createVideo(): #creates a video of all the images
 
 def saveAsFile(): #goes through the list of tuples and saves images as files
 	for (x, y) in listOfLinks:
-		countImages = countImages + 1
-		filename = "tweets" + str(countImages) + ".png"
-	
+		count = countImages + 1
+		filename = "tweets" + str(count) + ".png"
+		countImages =count
 		if (y == 0):
 			img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
 			d = ImageDraw.Draw(img)
