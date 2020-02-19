@@ -24,10 +24,12 @@ def createVideo(): #creates a video of all the images
 	subprocess.run(["ffmpeg","-framerate", "0.33", "-i", "tweet%d.png", "test.avi"])
 
 def saveAsFile(): #goes through the list of tuples and saves images as files
+	global countImages
+
 	for (x, y) in listOfLinks:
-		count = countImages + 1
-		filename = "tweets" + str(count) + ".png"
-		countImages =count
+		countImages = countImages + 1
+		filename = "tweets" + str(countImages) + ".png"
+
 		if (y == 0):
 			img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
 			d = ImageDraw.Draw(img)
@@ -35,8 +37,7 @@ def saveAsFile(): #goes through the list of tuples and saves images as files
 			img.save(filename)
 	
 		else:
-			req.urlretrieve(x, filename)
-		
+			req.urlretrieve(x, filename)		
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
