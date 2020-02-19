@@ -17,7 +17,7 @@ from datetime import datetime
 now = datetime.now()
 dt_string = now.strftime("%Y-%m-%d")
 
-countImages = 0
+countImages = -1
 listOfLinks = []
 
 def createVideo(): #creates a video of all the images
@@ -25,6 +25,7 @@ def createVideo(): #creates a video of all the images
 
 def saveAsFile(): #goes through the list of tuples and saves images as files
 	for (x, y) in listOfLinks:
+		countImages = countImages + 1
 		filename = "tweets" + str(countImages) + ".png"
 	
 		if (y == 0):
@@ -35,7 +36,7 @@ def saveAsFile(): #goes through the list of tuples and saves images as files
 	
 		else:
 			req.urlretrieve(x, filename)
-		countImages = countImages + 1
+		
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):

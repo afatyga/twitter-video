@@ -1,9 +1,8 @@
 import time
-
-from multiprocessing import Process, Queue, Pool, cpu_count
+from multiprocessing import Process, Queue, cpu_count
 from twitterHW2 import start
-import os
-import time
+#import os
+#import time
 
 PROCESSES = cpu_count() - 1
 NUMBER_OF_TASKS = 10
