@@ -1,4 +1,4 @@
-import twitterHW2
+#import twitterHW2
 #can only test certain tests on local
 
 def test_compare():
