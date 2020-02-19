@@ -65,7 +65,7 @@ def getMsgs(username):
 					for link in status.entities['media']:
 						url = str(link['media_url'])
 						countTweets = countTweets + 1
-						file_name = "image_name" + str(countTweets) + ".jpg"
+						file_name = "tweet" + str(countTweets) + ".png"
 						saveAsFile(file_name, url, 1)
 
 				except (NameError, KeyError):
