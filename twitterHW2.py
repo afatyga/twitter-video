@@ -84,7 +84,7 @@ def getMsgs(username):
 		return [] #means the username was not valid!
 
 def startUp(username, num): #my attempt at multi threading
-	start = time.time()
+#	start = time.time()
 	listOfStuff = getMsgs(username)
 #	global countImages
 	count = num * 100 # when there's multiple processes, you want the images to save as different names
