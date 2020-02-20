@@ -1,5 +1,4 @@
-import time
-from multiprocessing import Process, Queue, cpu_count
+from multiprocessing import Process, Queue
 from twitterHW2 import startUp
 
 users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl'] #16
@@ -23,7 +22,7 @@ def run():
     print(full_task_queue)
     count = 0
     processes = []
-    number_of_processes = 10
+
 
     while not full_task_queue.empty():
     	username = full_task_queue.get()
