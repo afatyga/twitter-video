@@ -1,6 +1,5 @@
 #EC500 HW 3
 #Alex Fatyga
-import time
 
 import keys #holds the keys for using tweepy
 import tweepy #twitter api

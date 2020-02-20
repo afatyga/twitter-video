@@ -1,6 +1,6 @@
 from multiprocessing import Process, Queue
 from twitterHW2 import startUp
-
+import time 
 users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl'] #16
 #users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer'] #5
 #users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4']
