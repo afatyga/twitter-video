@@ -25,6 +25,6 @@ Establish a processing criteria: <br>
 - Include tracking interface to show how many processes are going on and success of 
 
 # Installation
-- Git clone this repo!
+- Sit clone this repo!
 - Get up Twitter Developer account and get keys, place these keys into keys.py
 - in terminal, run pip3 install -r requirements.txt
