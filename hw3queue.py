@@ -1,4 +1,4 @@
-from multiprocessing import Process, Queue, cpu_count, Pool
+from multiprocessing import cpu_count, Pool
 from twitterHW2 import startUp
 import time 
 import os
