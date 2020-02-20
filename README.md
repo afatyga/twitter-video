@@ -23,3 +23,8 @@ Establish a processing criteria: <br>
 - For example, run different API calls at the same time?
 - Split the processing of an API into multiple threads?
 - Include tracking interface to show how many processes are going on and success of 
+
+# Installation
+- Git clone this repo!
+- Get up Twitter Developer account and get keys, place these keys into keys.py
+- in terminal, run pip3 install -r requirements.txt
