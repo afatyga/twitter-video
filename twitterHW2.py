@@ -16,13 +16,13 @@ from datetime import datetime
 
 now = datetime.now()
 dt_string = now.strftime("%Y-%m-%d")
-
+max_tweets = 20
 countImages = 0
 
 def createVideo(num): #creates a video of all the images
 	videoName = "tweetVid" + str(num) + ".avi"
 	startVal = num * 100
-	subprocess.run(["ffmpeg","-framerate", "0.33", "-loglevel", "quiet","-start_number", str(startVal), "-i", "tweets%d.png", videoName])
+	subprocess.run(["ffmpeg","-framerate", "0.33", "-loglevel", "quiet", "-start_number", str(startVal), "-i", "tweets%d.png",videoName])
 
 def imageThreads(listOfLinks, count):
 	threads = []
@@ -36,9 +36,9 @@ def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and 
 	filename = "tweets" + str(count) + ".png"
 #	countImages = countImages + 1
 	if (boolVal == 0):
-		img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
+		img = Image.new('RGB', (1000, 500), color = (73, 109, 137))
 		d = ImageDraw.Draw(img)
-		font = ImageFont.truetype('arial.ttf', size=16)
+		font = ImageFont.truetype('arial.ttf', size=14)
 		d.text((10,10), textOrUrl, fill=(255,255,0), font = font)
 		img.save(filename)
 	elif (boolVal == 1):
@@ -76,7 +76,7 @@ def getMsgs(username):
 
 				except (NameError, KeyError):
 					pass
-		print("Processed user " + username)
+	#	print("getMsgs of user " + username + " completed")
 
 		return listOfLinks # a success
 	except (tweepy.TweepError):
@@ -96,6 +96,7 @@ def startUp(username, num): #my attempt at multi threading
 		thread.join()
 	
 	createVideo(num)
+#	print("Video created for user " + username)
 	
 #	print(f'Time taken = {time.time() - start:.10f}')
 

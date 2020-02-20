@@ -1,42 +1,84 @@
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, cpu_count, Pool
 from twitterHW2 import startUp
 import time 
-users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl'] #16
-#users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer'] #5
-#users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4']
+import os
 
-def tempTemp(username, count):
-	startUp(username, count)
-	print("Process #" + str(count) + " username: " + username)
+PROCESSES = cpu_count() - 1
 
-def add_tasks(task_queue):
-    for user in users:
-        task_queue.put(user)
-    return task_queue
+def info(username):
+    print("Process: " + str(username) + "process id: " + str(os.getpid()))
+#    print('parent process:', os.getppid())
+#    print('process id:', os.getpid())
 
-def run():
-    empty_task_queue = Queue(maxsize = 20)
-    full_task_queue = add_tasks(empty_task_queue)
-    processes = []
+def tempTemp (usersWCount):
+	info(usersWCount[0])
+	startUp(usersWCount[0], usersWCount[1])
+
+# def add_tasks(task_queue, users):
+#     for user in users:
+#         task_queue.put(user)
+#     return task_queue
+
+def run(userList):
+    # empty_task_queue = Queue(maxsize = 20)
+    # full_task_queue = add_tasks(empty_task_queue, userList)
+    print(f'Running with {PROCESSES} processes!')
+#    processes = []
     startTime = time.time()
-    print(full_task_queue)
-    count = 0
-    processes = []
+    usersWCount = []
+    for user in userList:
+    	userCount = []
+    	userCount.append(user)
+    	userCount.append(userList.index(user))
+    	usersWCount.append(userCount)
+
+#    print(usersWCount)
+    pool = Pool(PROCESSES)
+    pool.map(tempTemp, usersWCount)
+    pool.close()
+    pool.join()
+#    print(full_task_queue)
+#    processes = []
 
 
-    while not full_task_queue.empty():
-    	username = full_task_queue.get()
-    	p = Process(target = tempTemp, args=(username, count,))
-    	processes.append((p, username))
-    	p.start()
-    	count = count + 1
+#     while not full_task_queue.empty():
+#     	for n in range(PROCESSES):
+#     		if (full_task_queue.empty()): break
 
-#      completing process
-    for (p,username) in processes:
-    	p.join()
-    	print(username + " completed")
+# 	    	username = full_task_queue.get()
+#     		info('main line', username)
+# 	    	p = Process(target = tempTemp, args=(username, count,))
+# 	    	processes.append(p)
+#     		p.start()
+#     		count = count + 1
+
+# #      completing process
+# 	    	for p in processes:
+#     			p.join()
 
     print(f'Time taken = {time.time() - startTime:.10f}')
 
 if __name__ == '__main__':
-	run()
+	users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl']
+
+	run(users)
+
+
+
+	   #  print(f'Running with {PROCESSES} processes!')
+
+    # while not full_task_queue.empty():
+    # 	for n in range(PROCESSES):
+    # 		if full_task_queue.empty():
+    # 			break
+    # 		username = full_task_queue.get()
+    # 		p = Process(target = tempTemp, args=(username, count,))
+    # 		processes.append(p)
+    # 		p.start()
+    # 		count = count + 1
+
+    # 	for p in processes:
+    # 		p.join()
+    # 		print("Process DONE")
+
+    # 	processes = []
