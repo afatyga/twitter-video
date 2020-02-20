@@ -1,6 +1,5 @@
 #EC500 HW 3
 #Alex Fatyga
-import time
 
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
@@ -19,23 +18,23 @@ now = datetime.now()
 dt_string = now.strftime("%Y-%m-%d")
 
 countImages = 0
-#listOfLinks = []
 
 def createVideo(num): #creates a video of all the images
 	videoName = "tweetVid" + str(num) + ".avi"
-	subprocess.run(["ffmpeg","-framerate", "0.33", "-i", "tweets%d.png", videoName])
+	startVal = num * 100
+	subprocess.run(["ffmpeg","-framerate", "0.33", "-loglevel", "quiet","-start_number", str(startVal), "-i", "tweets%d.png", videoName])
 
-def imageThreads(listOfLinks):
+def imageThreads(listOfLinks, count):
 	threads = []
 	for (textOrUrl,boolVal) in listOfLinks:
-		threads.append(Thread(target = saveAsFile, args = (textOrUrl, boolVal,)))
+		threads.append(Thread(target = saveAsFile, args = (textOrUrl, boolVal,count)))
+		count = count + 1
 	return threads
 
-def saveAsFile(textOrUrl, boolVal): #goes through the list of tuples and saves images as files
-
+def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and saves images as files
 	global countImages	
-	filename = "tweets" + str(countImages) + ".png"
-	countImages = countImages + 1
+	filename = "tweets" + str(count) + ".png"
+#	countImages = countImages + 1
 	if (boolVal == 0):
 		img = Image.new('RGB', (1000, 200), color = (73, 109, 137))
 		d = ImageDraw.Draw(img)
@@ -44,7 +43,6 @@ def saveAsFile(textOrUrl, boolVal): #goes through the list of tuples and saves i
 		img.save(filename)
 	elif (boolVal == 1):
 		req.urlretrieve(textOrUrl, filename)
-
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
@@ -74,7 +72,7 @@ def getMsgs(username):
 				try: #will only do the next line if there is an image
 					for link in status.entities['media']:
 						url = str(link['media_url'])
-						listOfLinks.append((str(url)),1)
+						listOfLinks.append((str(url), 1))
 
 				except (NameError, KeyError):
 					pass
@@ -84,19 +82,21 @@ def getMsgs(username):
 	except (tweepy.TweepError):
 		return [] #means the username was not valid!
 
-def start(username, num): #my attempt at multi threading
-	start = time.time()
+def startUp(username, num): #my attempt at multi threading
+#	start = time.time()
 	listOfStuff = getMsgs(username)
-
-	# for (x,y) in listOfStuff:
-	# 	saveAsFile(x,y)		
-
-	threads = imageThreads(listOfStuff)
+#	global countImages
+	count = num * 100 # when there's multiple processes, you want the images to save as different names
+	threads = imageThreads(listOfStuff, count)
+	
 	for thread in threads:
 		thread.start()
+
 	for thread in threads:
 		thread.join()
+	
 	createVideo(num)
-	print(f'Time taken = {time.time() - start:.10f}')
+	
+#	print(f'Time taken = {time.time() - start:.10f}')
 
-start("johnmulaneybot",3)
+#start("johnmulaneybot", 3)
