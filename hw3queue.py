@@ -1,84 +1,30 @@
-from multiprocessing import cpu_count, Pool
-from twitterHW2 import startUp
-import time 
-import os
+from multiprocessing import cpu_count, Pool #for multi processing
+from twitterHW2 import startUp # to multi process getting the tweets and creating the video
+import time # to get the time
+import sys
 
 PROCESSES = cpu_count() - 1
 
-def info(username):
-    print("Process: " + str(username) + "process id: " + str(os.getpid()))
-#    print('parent process:', os.getppid())
-#    print('process id:', os.getpid())
+def runProcesses(userList):
 
-def tempTemp (usersWCount):
-	info(usersWCount[0])
-	startUp(usersWCount[0], usersWCount[1])
-
-# def add_tasks(task_queue, users):
-#     for user in users:
-#         task_queue.put(user)
-#     return task_queue
-
-def run(userList):
-    # empty_task_queue = Queue(maxsize = 20)
-    # full_task_queue = add_tasks(empty_task_queue, userList)
     print(f'Running with {PROCESSES} processes!')
-#    processes = []
     startTime = time.time()
-    usersWCount = []
-    for user in userList:
-    	userCount = []
-    	userCount.append(user)
-    	userCount.append(userList.index(user))
-    	usersWCount.append(userCount)
+    count = list(range(len(userList)))
 
-#    print(usersWCount)
+    result = ([[u, c] for u,c in zip(userList,count)])
+
     pool = Pool(PROCESSES)
-    pool.map(tempTemp, usersWCount)
+    pool.map(startUp, result)
     pool.close()
     pool.join()
-#    print(full_task_queue)
-#    processes = []
-
-
-#     while not full_task_queue.empty():
-#     	for n in range(PROCESSES):
-#     		if (full_task_queue.empty()): break
-
-# 	    	username = full_task_queue.get()
-#     		info('main line', username)
-# 	    	p = Process(target = tempTemp, args=(username, count,))
-# 	    	processes.append(p)
-#     		p.start()
-#     		count = count + 1
-
-# #      completing process
-# 	    	for p in processes:
-#     			p.join()
 
     print(f'Time taken = {time.time() - startTime:.10f}')
 
 if __name__ == '__main__':
-	users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl']
+	users = []
+	sys.argv.pop(0)
+	for user in sys.argv:
 
-	run(users)
+		users.append(user)
 
-
-
-	   #  print(f'Running with {PROCESSES} processes!')
-
-    # while not full_task_queue.empty():
-    # 	for n in range(PROCESSES):
-    # 		if full_task_queue.empty():
-    # 			break
-    # 		username = full_task_queue.get()
-    # 		p = Process(target = tempTemp, args=(username, count,))
-    # 		processes.append(p)
-    # 		p.start()
-    # 		count = count + 1
-
-    # 	for p in processes:
-    # 		p.join()
-    # 		print("Process DONE")
-
-    # 	processes = []
+	runProcesses(users)

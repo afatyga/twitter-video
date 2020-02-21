@@ -3,7 +3,9 @@
 
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
-from threading import Thread
+from threading import Thread #threading stuff
+
+import os #to get pid id
 
 import subprocess #to run subprocess
 
@@ -43,6 +45,9 @@ def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and 
 		img.save(filename)
 	elif (boolVal == 1):
 		req.urlretrieve(textOrUrl, filename)
+		image = Image.open(filename)
+		new_image = image.resize((400, 400))
+		new_image.save(filename)
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
@@ -50,16 +55,15 @@ def getMsgs(username):
 	if not isinstance(username,str): #can only take in a string
 		return 0
 
-	auth = tweepy.OAuthHandler(keys.key, keys.secretKey) #using key from keys file - blank in github
-	auth.set_access_token(keys.accessToken, keys.accessTokenSecret)
+	auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret) #using key from keys file - blank in github
+	auth.set_access_token(keys.access_token, keys.access_secret)
 
 	tweets = ""
 	api = tweepy.API(auth)
-
 	listOfLinks = []
 
 	try:	#will be an error if the username is valid
-		for status in tweepy.Cursor(api.user_timeline,username).items(20): #gets past 20 tweets
+		for status in tweepy.Cursor(api.user_timeline,username).items(max_tweets): #gets past 20 tweets
 			    
 			tweetDateTime = str(status.created_at)
 			dateTime = tweetDateTime.split()
@@ -82,11 +86,13 @@ def getMsgs(username):
 	except (tweepy.TweepError):
 		return [] #means the username was not valid!
 
-def startUp(username, num): #my attempt at multi threading
-#	start = time.time()
-	listOfStuff = getMsgs(username)
-#	global countImages
-	count = num * 100 # when there's multiple processes, you want the images to save as different names
+def startUp(userNum): #my attempt at multi threading
+
+	print("Process with username: " + str(userNum[0]) + " and process id: " + str(os.getpid()) + " is running")
+
+	listOfStuff = getMsgs(userNum[0])
+
+	count = userNum[1] * 100 # when there's multiple processes, you want the images to save as different names
 	threads = imageThreads(listOfStuff, count)
 	
 	for thread in threads:
@@ -95,9 +101,5 @@ def startUp(username, num): #my attempt at multi threading
 	for thread in threads:
 		thread.join()
 	
-	createVideo(num)
-#	print("Video created for user " + username)
-	
-#	print(f'Time taken = {time.time() - start:.10f}')
-
-#start("johnmulaneybot", 3)
+	createVideo(userNum[1])
+	print("Video created for user " + userNum[0])
