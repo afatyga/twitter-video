@@ -1,42 +1,30 @@
-from multiprocessing import Process, Queue
-from twitterHW2 import startUp
-import time 
-users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4', 'wendys', 'hogwartsmystery', 'wizardingworld', 'hpotterquotes', 'arianagrande', 'xxl'] #16
-#users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer'] #5
-#users = ['johnmulaneybot', 'budiningservice',  'budogpound', 'OnlyHipHopFacts', 'jennafischer', 'bodegacats_', 'bu_tweets', 'tobyhater', 'factsofschool', 'thegoldenratio4']
+from multiprocessing import cpu_count, Pool #for multi processing
+from twitterHW2 import startUp # to multi process getting the tweets and creating the video
+import time # to get the time
+import sys
 
-def tempTemp(username, count):
-	startUp(username, count)
-	print("Process #" + str(count) + " username: " + username)
+PROCESSES = cpu_count() - 1
 
-def add_tasks(task_queue):
-    for user in users:
-        task_queue.put(user)
-    return task_queue
+def runProcesses(userList):
 
-def run():
-    empty_task_queue = Queue(maxsize = 20)
-    full_task_queue = add_tasks(empty_task_queue)
-    processes = []
+    print(f'Running with {PROCESSES} processes!')
     startTime = time.time()
-    print(full_task_queue)
-    count = 0
-    processes = []
+    count = list(range(len(userList)))
 
+    result = ([[u, c] for u,c in zip(userList,count)])
 
-    while not full_task_queue.empty():
-    	username = full_task_queue.get()
-    	p = Process(target = tempTemp, args=(username, count,))
-    	processes.append((p, username))
-    	p.start()
-    	count = count + 1
-
-#      completing process
-    for (p,username) in processes:
-    	p.join()
-    	print(username + " completed")
+    pool = Pool(PROCESSES)
+    pool.map(startUp, result)
+    pool.close()
+    pool.join()
 
     print(f'Time taken = {time.time() - startTime:.10f}')
 
 if __name__ == '__main__':
-	run()
+	users = []
+	sys.argv.pop(0)
+	for user in sys.argv:
+
+		users.append(user)
+
+	runProcesses(users)
