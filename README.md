@@ -1,5 +1,21 @@
 # video-afatyga
 EC500 C1 Alex Fatyga <br>
+Adapting the previous assignment, this homework uses multithreading and multiprocessing to create a video of the tweets and pictures of many specified users. I use multithreading when creating the images of the tweets and pictures and is used in the implementation of generating one video. I use multiprocessing to create many videos at time for different users. Each process uses multithreading and having many processes at a time is multiprocessing. <br>
+File twitterHW2.py implements the multithreading and generates a video for one user. File HW3Queue.py multiprocesses twitterHW2.py to create many videos at a time.
+
+# Installation
+- Git clone this repo!
+- Set up Twitter Developer account
+- in terminal, run pip3 install -r requirements.txt
+
+# To Use
+- 2 ways: 
+1. using restartProgram (batch or bash) and modify to run with the twitter users you want, example is provided in code but another is => python3 hw3queue.py user1 user2 user3 user4
+2. in terminal, run python3 hw3queue.py user1 user2 user3        (and so on), this way will not delete other pictures or videos previously created
+
+# Task 1 
+Task 1 is located in ./task1/ <br>
+I tested the code provided in Python Threads vs Processes and saw that CPU bound was faster than IO bound!
 
 # Main Exercise
 Using the twitter feed, construct a daily video summarizing a twitter handle day <br>
@@ -13,10 +29,6 @@ saveAsFile(textOrUrl, boolVal, count) - takes in a string, a 1 or 0 to indicate 
 imageThreads(listOfLinks, count) - creates threads to run saveAsFile, each thread is an image to be created, the function iterates through listOfLinks to create the thread and returns a list of threads. count is the starting number for the filenames and increments count while iterating through listOfLinks to always assign a different filename. This starting number is important so that with multiporcessing there aren't processes using the same files when creating the video. <br>
 createVideo(num) - this function creates the video by using a subprocess. num specifies which process is running and is multiplied by 100 (as with the count in each filename). This value multiplied by 100 is the starting number for when creating the video from images. For example, a starting number of 100 means the video will be created from images saved as tweets100.png and upwards. <br>
 
-# Task 1 
-Task 1 is located in ./task1/ <br>
-I tested the code provided in Python Threads vs Processes and saw that CPU bound was faster than IO bound.
-
 # Rest of Assignment
 Establish a processing criteria: <br>
 - How many API calls you can handle simultaneously and why? 3 => using multi.processing.cpu_count() - 1 I found that my computer can handle 3 simultaneous API calls
@@ -28,15 +40,6 @@ For multiprocessing, the usernames you want to run through should be specified i
 However, a user can just run python3 hw3queue.py username1 username2 username3 ...  by itself and specify the usernames after <br>
 hw3queue.py calls runProcesses with the list of usernames, it gets the time at the beginning before any processes have been called and then creates a pool with the amount of processes allowed concurrently (found through cpu.count() - 1) and uses map_async on the function startUp (from twitterHW2.py) and the list of usernames (with their count associated so pictures and videos can create correctly). It then gets the time at the end and subtracts to give a final run time.
 
-# Installation
-- Git clone this repo!
-- Set up Twitter Developer account
-- in terminal, run pip3 install -r requirements.txt
-
-# To Use
-- 2 ways: 
-1. using restartProgram (batch or bash) and modify to run with the twitter users you want, example is provided in code but another is => python3 hw3queue.py user1 user2 user3 user4
-2. in terminal, run python3 hw3queue.py user1 user2 user3        (and so on), this way will not delete other pictures or videos previously created
 
 # The multiprocessing of HW3Queue.py Further Explained (and with examples!)
 I use multiprocessing.Pool with the argument (cpu_count() - 1) as the amount of processes. <br>
