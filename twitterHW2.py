@@ -89,7 +89,8 @@ def startUp(userNum): #my attempt at multi threading
 
 	listOfStuff = getMsgs(userNum[0]) #returns a list of urls/texts to make into images!
 
-	if (listOfStuff == []): return 0 #no images or video to create => either incorrect username or that account just doesn't have any tweets!~
+	if (listOfStuff == []): 
+		return 0 #no images or video to create => either incorrect username or that account just doesn't have any tweets!~
 
 	count = userNum[1] * 100 # when there's multiple processes, you want the images to save as different names
 	threads = imageThreads(listOfStuff, count) #creating the threads!
