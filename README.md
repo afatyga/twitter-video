@@ -1,5 +1,4 @@
-# video-afatyga
-EC500 C1 Alex Fatyga <br>
+# EC500 C1 Alex Fatyga
 Adapting the previous assignment, this homework uses multithreading and multiprocessing to create a video of the tweets and pictures of many specified users. I use multithreading when creating the images of the tweets and pictures and is used in the implementation of generating one video. I use multiprocessing to create many videos at time for different users. Each process uses multithreading and having many processes at a time is multiprocessing. <br>
 File twitterHW2.py implements the multithreading and generates a video for one user. File HW3Queue.py multiprocesses twitterHW2.py to create many videos at a time.
 
