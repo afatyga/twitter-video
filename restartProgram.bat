@@ -1,3 +1,3 @@
 del *.avi
 del *.png
-python3 hw3queue.py johnmulaneybot
+python3 hw3queue.py thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4 thegoldenratio4
