@@ -1,6 +1,5 @@
 #EC500 HW 3
 #Alex Fatyga
-
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
 from threading import Thread #threading stuff
@@ -53,7 +52,7 @@ def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and 
 def getMsgs(username):
 
 	if not isinstance(username,str): #can only take in a string
-		return 0
+		return []
 
 	auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret) #using key from keys file - blank in github
 	auth.set_access_token(keys.access_token, keys.access_secret)
@@ -80,26 +79,28 @@ def getMsgs(username):
 
 				except (NameError, KeyError):
 					pass
-	#	print("getMsgs of user " + username + " completed")
 
 		return listOfLinks # a success
 	except (tweepy.TweepError):
 		return [] #means the username was not valid!
 
 def startUp(userNum): #my attempt at multi threading
-
 	print("Process with username: " + str(userNum[0]) + " and process id: " + str(os.getpid()) + " is running")
 
-	listOfStuff = getMsgs(userNum[0])
+	listOfStuff = getMsgs(userNum[0]) #returns a list of urls/texts to make into images!
+
+	if (listOfStuff == []): 
+		return 0 #no images or video to create => either incorrect username or that account just doesn't have any tweets!~
 
 	count = userNum[1] * 100 # when there's multiple processes, you want the images to save as different names
-	threads = imageThreads(listOfStuff, count)
+	threads = imageThreads(listOfStuff, count) #creating the threads!
 	
 	for thread in threads:
-		thread.start()
+		thread.start() #starts the threads
 
 	for thread in threads:
-		thread.join()
+		thread.join() #ends the threads
 	
 	createVideo(userNum[1])
 	print("Video created for user " + userNum[0])
+	return 1

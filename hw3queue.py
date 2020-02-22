@@ -14,7 +14,7 @@ def runProcesses(userList):
     result = ([[u, c] for u,c in zip(userList,count)])
 
     pool = Pool(PROCESSES)
-    pool.map(startUp, result)
+    pool.map_async(startUp, result)
     pool.close()
     pool.join()
 
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 	users = []
 	sys.argv.pop(0)
 	for user in sys.argv:
-
 		users.append(user)
-
-	runProcesses(users)
+	print(str(len(users) + 1) + " tasks about to start running!") 
+	if not (users == []):
+		runProcesses(users)
