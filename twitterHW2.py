@@ -6,7 +6,6 @@ from threading import Thread #threading stuff
 import json
 import os #to get pid id
 
-import subprocess #to run subprocess
 
 from PIL import Image, ImageDraw, ImageFont #to save the text as an image
 
