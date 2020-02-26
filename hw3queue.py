@@ -25,6 +25,6 @@ if __name__ == '__main__':
 	sys.argv.pop(0)
 	for user in sys.argv:
 		users.append(user)
-	print(str(len(users) + 1) + " tasks about to start running!") 
+	print(str(len(users)) + " tasks about to start running!") 
 	if not (users == []):
 		runProcesses(users)
