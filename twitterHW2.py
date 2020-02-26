@@ -3,10 +3,9 @@
 import keys #holds the keys for using tweepy
 import tweepy #twitter api
 from threading import Thread #threading stuff
-
+import json
 import os #to get pid id
 
-import subprocess #to run subprocess
 
 from PIL import Image, ImageDraw, ImageFont #to save the text as an image
 
@@ -23,7 +22,9 @@ countImages = 0
 def createVideo(num): #creates a video of all the images
 	videoName = "tweetVid" + str(num) + ".avi"
 	startVal = num * 100
-	subprocess.run(["ffmpeg","-framerate", "0.33", "-loglevel", "quiet", "-start_number", str(startVal), "-i", "tweets%d.png",videoName])
+	args = "ffmpeg.exe -framerate 0.33 -loglevel quiet -start_number " + str(startVal)+ " -i tweets%d.png " + videoName
+	os.system(args)
+#	subprocess.run(["ffmpeg.exe","-framerate", "0.33", "-loglevel", "quiet", "-start_number", str(startVal), "-i", "tweets%d.png",videoName])
 
 def imageThreads(listOfLinks, count):
 	threads = []
@@ -33,9 +34,9 @@ def imageThreads(listOfLinks, count):
 	return threads
 
 def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and saves images as files
-	global countImages	
+
 	filename = "tweets" + str(count) + ".png"
-#	countImages = countImages + 1
+
 	if (boolVal == 0):
 		img = Image.new('RGB', (1000, 500), color = (73, 109, 137))
 		d = ImageDraw.Draw(img)
@@ -50,9 +51,22 @@ def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and 
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
-
 	if not isinstance(username,str): #can only take in a string
 		return []
+
+	if (keys.consumer_key == ""): #meaning all are empty => should read backupTweets.json!
+
+		listOfLinks  = []
+		with open('backupTweets.json') as json_file:
+		    data = json.load(json_file)
+		    for tweets in data['tweets']:
+		    	listOfLinks.append((str(tweets['text']),0))
+		    	try:
+		    		url = str(tweets['media'])
+		    		listOfLinks.append((url,1))
+		    	except(NameError, KeyError):
+		    		pass
+		return listOfLinks
 
 	auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret) #using key from keys file - blank in github
 	auth.set_access_token(keys.access_token, keys.access_secret)
@@ -62,24 +76,27 @@ def getMsgs(username):
 	listOfLinks = []
 
 	try:	#will be an error if the username is valid
+
 		for status in tweepy.Cursor(api.user_timeline,username).items(max_tweets): #gets past 20 tweets
-			    
+
 			tweetDateTime = str(status.created_at)
 			dateTime = tweetDateTime.split()
 
-			if (dateTime[0] == dt_string): #will only get tweets from the past day
-
-				tweets = tweets + "\n" + status.text # will also print tweets and google vision detection to terminal
+			if (dateTime[0] == dt_string): #will only get tweets from today
+				tweets = tweets + "\n" + status.text 
 				listOfLinks.append((str(status.text),0))
 
 				try: #will only do the next line if there is an image
-					for link in status.entities['media']:
-						url = str(link['media_url'])
+
+					for link in status._json['entities']['media']:
+						url = str(link['media_url_https'])
 						listOfLinks.append((str(url), 1))
+
 
 				except (NameError, KeyError):
 					pass
 
+	#	print(tweets)
 		return listOfLinks # a success
 	except (tweepy.TweepError):
 		return [] #means the username was not valid!
