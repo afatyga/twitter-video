@@ -50,7 +50,6 @@ def saveAsFile(textOrUrl, boolVal, count): #goes through the list of tuples and 
 
 #first function, takes in a string of the twitter username, creates a json file of the output and returns a 1 or 0 to indicate success or failure
 def getMsgs(username):
-	woKeysFlag = 0
 	if not isinstance(username,str): #can only take in a string
 		return []
 
