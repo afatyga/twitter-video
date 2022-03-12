@@ -1,4 +1,4 @@
 tweepy==3.8.0
 urllib3==1.24.3
 ffmpy==0.2.2
-Pillow==7.0.0
+Pillow==9.0.1
